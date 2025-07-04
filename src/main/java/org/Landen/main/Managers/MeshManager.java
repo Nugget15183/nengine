@@ -10,6 +10,7 @@ import org.Landen.engine.maths.Vector2f;
 import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.objects.Camera;
 import org.Landen.engine.objects.GameObject;
+import org.Landen.engine.objects.Scene;
 
 import java.util.ArrayList;
 
@@ -17,17 +18,54 @@ public class MeshManager {
     public static ArrayList<Mesh> meshes = new ArrayList<>();
     public static ArrayList<GameObject> gameObjects = new ArrayList<>();
 
-    public GameObject instanciateMesh(String filePath, Material material, Vector3f pos, Vector3f rot, Vector3f scale) {
+    private static GameObject instanciateMesh(String filePath, Material material, Vector3f pos, Vector3f rot, Vector3f scale) {
         Mesh mesh = ModelLoader.loadModel(filePath, material);
         meshes.add(mesh);
         return updateGameObjects(mesh, pos, rot, scale);
     }
 
-    private GameObject updateGameObjects(Mesh mesh, Vector3f pos, Vector3f rot, Vector3f scale) {
+    public static GameObject createGameObjectFromMesh(String filePath, Material material, Vector3f pos, Vector3f rot, Vector3f scale) {
+        Mesh mesh = ModelLoader.loadModel(filePath, material);
+        return createGameObject(mesh, pos, rot, scale);
+    }
+
+    private static GameObject createGameObject(Mesh mesh, Vector3f pos, Vector3f rot, Vector3f scale) {
+        GameObject gameObject = new GameObject(pos, rot, scale, mesh);
+        mesh.create();
+        return gameObject;
+    }
+
+    private static void instanciateGameObject(GameObject g) {
+        meshes.add(g.getMesh());
+        gameObjects.add(g);
+    }
+
+    private static GameObject updateGameObjects(Mesh mesh, Vector3f pos, Vector3f rot, Vector3f scale) {
         GameObject gameObject = new GameObject(pos, rot, scale, mesh);
         gameObjects.add(gameObject);
         mesh.create();
         return gameObject;
+    }
+
+    public static void loadScene(Scene s) {
+        for(GameObject g : s.getGameObjects()) {
+            instanciateGameObject(g);
+        }
+        System.out.println("Loaded scene");
+    }
+
+    public static void unloadScene(Scene s) {
+        for(GameObject g : s.getGameObjects()) {
+            unloadGameObject(g);
+        }
+    }
+
+    public static void unloadGameObject(GameObject g) {
+        for(GameObject gameObject : gameObjects) {
+            if(gameObject == g) {
+                gameObjects.remove(gameObject);
+            }
+        }
     }
 
     public static GameObject raycast(Camera camera, Vector2f dimentions) {

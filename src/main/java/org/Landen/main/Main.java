@@ -9,12 +9,15 @@ import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.maths.Vector4f;
 import org.Landen.engine.objects.Camera;
 import org.Landen.engine.objects.GameObject;
+import org.Landen.engine.objects.Scene;
 import org.Landen.main.Managers.EventListenerManager;
 import org.Landen.main.Managers.MeshManager;
+import org.Landen.main.Managers.SceneManager;
 import org.lwjgl.glfw.GLFW;
 
 import org.lwjgl.opengl.GL11;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class Main implements Runnable {
@@ -26,7 +29,6 @@ public class Main implements Runnable {
 	public static boolean looking = true;
 	public boolean hasLoaded = false;
 
-	public MeshManager meshManager = new MeshManager();
 	public EventListenerManager eventListenerManager = new EventListenerManager();
 
 	public Camera camera = new Camera(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0));
@@ -94,9 +96,11 @@ public class Main implements Runnable {
 	}
 
 	private void onLoad() {
+		ArrayList<GameObject> objs = new ArrayList<>();
+
 		Material gm = new Material(new Vector4f(0.5f,0.5f,0.5f,1f));
 
-		GameObject g = meshManager.instanciateMesh("models/usermodels/monkey.obj",
+		GameObject g = MeshManager.createGameObjectFromMesh("models/usermodels/monkey.obj",
 				gm,
 				new Vector3f(0,0,-5),
 				new Vector3f(0,0,0),
@@ -104,15 +108,20 @@ public class Main implements Runnable {
 
 		Material pm = new Material(new Vector4f(0.5f,0.5f,0.5f,0.5f));
 
-		GameObject p = meshManager.instanciateMesh("models/models/plane.obj",
+		GameObject p = MeshManager.createGameObjectFromMesh("models/models/plane.obj",
 				pm,
 				new Vector3f(0,-2.5f,0),
 				new Vector3f(-90,0,0),
 				new Vector3f(1,1,1));
 
+		objs.add(g);
+		objs.add(p);
+
+		Scene s = new Scene(objs);
+		SceneManager.insert(s, true);
 	}
 
-	public static void onKeyPress(int key, int scancode,int action, int mods) {
+	public static void onKeyPress(int key, int scancode, int action, int mods) {
 		if(key == GLFW.GLFW_KEY_ESCAPE) {
 			looking = !looking;
 		}
