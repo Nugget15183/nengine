@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import org.Landen.engine.maths.Ray;
 import org.Landen.engine.maths.Vector3f;
-import org.Landen.engine.objects.GameObject;
+import org.Landen.engine.objects.nonliteral.GameObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;

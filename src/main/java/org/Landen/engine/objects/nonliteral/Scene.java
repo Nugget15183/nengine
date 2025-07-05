@@ -1,4 +1,4 @@
-package org.Landen.engine.objects;
+package org.Landen.engine.objects.nonliteral;
 
 import org.Landen.main.Managers.SceneManager;
 

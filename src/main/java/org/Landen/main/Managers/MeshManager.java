@@ -9,8 +9,8 @@ import org.Landen.engine.maths.Ray;
 import org.Landen.engine.maths.Vector2f;
 import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.objects.Camera;
-import org.Landen.engine.objects.GameObject;
-import org.Landen.engine.objects.Scene;
+import org.Landen.engine.objects.nonliteral.GameObject;
+import org.Landen.engine.objects.nonliteral.Scene;
 
 import java.util.ArrayList;
 
