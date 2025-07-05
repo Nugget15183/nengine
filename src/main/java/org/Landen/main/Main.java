@@ -99,7 +99,6 @@ public class Main implements Runnable {
 
 	private void render() {
 		MeshManager.render(renderer, camera);
-
 		window.swapBuffers();
 	}
 

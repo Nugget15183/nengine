@@ -5,7 +5,7 @@ import org.Landen.main.Managers.SceneManager;
 import java.util.ArrayList;
 
 public class Scene {
-    private ArrayList<GameObject> objects = new ArrayList<>();
+    private final ArrayList<GameObject> objects;
 
     public Scene(ArrayList<GameObject> objects) {
         this.objects = objects;
