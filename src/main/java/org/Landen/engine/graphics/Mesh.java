@@ -92,7 +92,7 @@ public class Mesh {
 		material.destroy();
 	}
 
-	public void rotate(Vector3f rotation) {
+	public void setRotation(Vector3f rotation) {
 		float radX = (float) Math.toRadians(rotation.getX());
 		float radY = (float) Math.toRadians(rotation.getY());
 		float radZ = (float) Math.toRadians(rotation.getZ());

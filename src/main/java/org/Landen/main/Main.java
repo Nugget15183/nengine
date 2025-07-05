@@ -83,7 +83,9 @@ public class Main implements Runnable {
 
 	private void update() {
 		window.update();
-		deltaTime = (System.nanoTime() - lastFrameTime) / 1_000_000_000.0f;
+		currentTime = System.nanoTime();
+		deltaTime = (currentTime - lastFrameTime) / 1_000_000_000.0f;
+		lastFrameTime = currentTime;
 
 		camera.update(looking);
 		camera.setFirstMouse(!looking);
@@ -93,6 +95,7 @@ public class Main implements Runnable {
 
 		window.mouseState(looking);
 	}
+
 
 	private void render() {
 		MeshManager.render(renderer, camera);
@@ -109,13 +112,14 @@ public class Main implements Runnable {
 	private void onLoad() {
 		ArrayList<GameObject> objs = new ArrayList<>();
 
-		Material m = new Material(new Vector4f(0.5f,0.5f,0.5f,1f), new Vector2f(1000f,5f));
+		Material m = new Material(new Vector4f(0.5f,0.5f,0.5f,1f),1f,0.5f);
 
 		GameObject g = MeshManager.createGameObjectFromMesh("models/usermodels/monkey.obj",
 				m,
 				new Vector3f(0,0,-5),
 				new Vector3f(0,0,0),
-				new Vector3f(1,1,1));
+				new Vector3f(1,1,1)
+		);
 
 		objs.add(g);
 
@@ -135,7 +139,7 @@ public class Main implements Runnable {
 				new Vector3f(0,0,0),
 				new Vector3f(0,100,0),
 				g,
-				100f
+				50f
 		));
 
 		Animation anim = new Animation(keyframes);

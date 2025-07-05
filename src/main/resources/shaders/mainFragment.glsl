@@ -10,6 +10,8 @@ uniform sampler2D tex;
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform vec3 cameraPosition;
+uniform float reflectiveness;
+uniform float ambient;
 
 void main() {
     vec3 normal = normalize(fragNormal);
@@ -21,8 +23,8 @@ void main() {
     float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
 
     vec3 diffuse = diff * lightColor;
-    vec3 specular = spec * lightColor * 0.5;
-    vec3 ambient = vec3(0.1);
+    vec3 specular = spec * lightColor * reflectiveness;
+    vec3 ambient = vec3(ambient);
 
     vec4 texColor = texture(tex, fragTexCoord);
     vec3 lighting = (ambient + diffuse + specular) * texColor.rgb;

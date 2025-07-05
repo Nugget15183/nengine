@@ -25,13 +25,26 @@ public class Material {
 	private Vector3f color3;
 	private float alpha = 0;
 
-	public Material(String path) {
-		this.path = path;
+	private float reflectiveness;
+	private float ambient;
+
+	public float getReflectiveness() {
+		return reflectiveness;
 	}
 
-	public Material(Vector4f rgba) {
+	public float getAmbient() {
+		return ambient;
+	}
+
+	public Material(String path) {
+		this.path = path;
+    }
+
+	public Material(Vector4f rgba, float reflectiveness, float ambient) {
 		this.color3 = new Vector3f(rgba.getX(), rgba.getY(), rgba.getZ());
 		this.alpha = rgba.getW();
+		this.reflectiveness = reflectiveness;
+		this.ambient = ambient;
 	}
 
 	public void create() {

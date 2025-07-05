@@ -40,6 +40,9 @@ public class Renderer {
 		shader.bind();
 		shader.setUniform("lightDirection", new Vector3f(-0.5f, -1.0f, -0.3f));
 		shader.setUniform("lightColor", new Vector3f(1.0f, 1.0f, 1.0f));
+		shader.setUniform("ambient", object.getMesh().getMaterial().getAmbient());
+		shader.setUniform("reflectiveness", object.getMesh().getMaterial().getReflectiveness());
+
 		shader.setUniform("cameraPosition", camera.getPosition());
 		shader.setUniform("model", Matrix4f.transform(object.getPosition(), object.getRotation(), object.getScale()));
 		shader.setUniform("view", Matrix4f.view(camera.getPosition(), camera.getRotation()));

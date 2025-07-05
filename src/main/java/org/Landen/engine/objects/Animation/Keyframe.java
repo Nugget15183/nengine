@@ -4,10 +4,10 @@ import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.objects.GameObject;
 
 public class Keyframe {
-     private final Vector3f rot;
-     private final Vector3f pos;
-     private final GameObject target;
-     private final float time;
+    private final Vector3f rot;
+    private final Vector3f pos;
+    private final GameObject target;
+    private final float time;
 
     public Keyframe(Vector3f rot, Vector3f pos, GameObject target, float time) {
         this.rot = rot;
