@@ -11,7 +11,8 @@ public class UISliderComponet extends UIComponet {
         void onValueChanged(float newValue);
     }
 
-    public UISliderComponet(String label, float value, float min, float max, ValueChangedListener listener) {
+    public UISliderComponet(String id,String label, float value, float min, float max, ValueChangedListener listener) {
+        super(id);
         this.label = label;
         this.value = value;
         this.min = min;

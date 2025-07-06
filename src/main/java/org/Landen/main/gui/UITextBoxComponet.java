@@ -12,7 +12,8 @@ public class UITextBoxComponet extends UIComponet {
         void onTextChanged(String newText);
     }
 
-    public UITextBoxComponet(String label, String initialText, int bufferSize, TextChangedListener listener) {
+    public UITextBoxComponet(String id,String label, String initialText, int bufferSize, TextChangedListener listener) {
+        super(id);
         this.label = label;
         this.text = new ImString(initialText, bufferSize);
         this.listener = listener;

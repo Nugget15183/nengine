@@ -18,19 +18,19 @@ public class MeshManager {
     public static ArrayList<Mesh> meshes = new ArrayList<>();
     public static ArrayList<GameObject> gameObjects = new ArrayList<>();
 
-    private static GameObject instanciateMesh(String filePath, Material material, Vector3f pos, Vector3f rot, Vector3f scale) {
+    private static GameObject instanciateMesh(String name, String filePath, Material material, Vector3f pos, Vector3f rot, Vector3f scale) {
         Mesh mesh = ModelLoader.loadModel(filePath, material);
         meshes.add(mesh);
-        return updateGameObjects(mesh, pos, rot, scale);
+        return updateGameObjects(name,mesh, pos, rot, scale);
     }
 
-    public static GameObject createGameObjectFromMesh(String filePath, Material material, Vector3f pos, Vector3f rot, Vector3f scale) {
+    public static GameObject createGameObjectFromMesh(String name, String filePath, Material material, Vector3f pos, Vector3f rot, Vector3f scale) {
         Mesh mesh = ModelLoader.loadModel(filePath, material);
-        return createGameObject(mesh, pos, rot, scale);
+        return createGameObject(name, mesh, pos, rot, scale);
     }
 
-    private static GameObject createGameObject(Mesh mesh, Vector3f pos, Vector3f rot, Vector3f scale) {
-        GameObject gameObject = new GameObject(pos, rot, scale, mesh);
+    private static GameObject createGameObject(String name, Mesh mesh, Vector3f pos, Vector3f rot, Vector3f scale) {
+        GameObject gameObject = new GameObject(name, pos, rot, scale, mesh);
         mesh.create();
         return gameObject;
     }
@@ -40,8 +40,8 @@ public class MeshManager {
         gameObjects.add(g);
     }
 
-    private static GameObject updateGameObjects(Mesh mesh, Vector3f pos, Vector3f rot, Vector3f scale) {
-        GameObject gameObject = new GameObject(pos, rot, scale, mesh);
+    private static GameObject updateGameObjects(String name, Mesh mesh, Vector3f pos, Vector3f rot, Vector3f scale) {
+        GameObject gameObject = new GameObject(name, pos, rot, scale, mesh);
         gameObjects.add(gameObject);
         mesh.create();
         return gameObject;
@@ -66,6 +66,18 @@ public class MeshManager {
                 gameObjects.remove(gameObject);
             }
         }
+    }
+
+    public static ArrayList<GameObject> intersects(Ray ray) {
+        ArrayList<GameObject> intersectedGameObjects = new ArrayList<>();
+        for(GameObject g : gameObjects) {
+            if(g == null) continue;
+            Mesh m = g.getMesh();
+            if(m.intersects(ray, g)) {
+                intersectedGameObjects.add(g);
+            }
+        }
+        return intersectedGameObjects;
     }
 
     public static GameObject raycast(Camera camera, Vector2f dimentions) {

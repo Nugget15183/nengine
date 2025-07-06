@@ -251,7 +251,6 @@ public class Mesh {
 	}
 
 	private Vector3f transformVertex(Vector3f vertex, Vector3f position, Vector3f rotation, Vector3f scale) {
-		// Apply scale
 		Vector3f transformed = new Vector3f(
 				vertex.getX() * scale.getX(),
 				vertex.getY() * scale.getY(),
@@ -275,7 +274,8 @@ public class Mesh {
 	}
 
 	private RayIntersection rayTriangleIntersection(Ray ray, Vector3f v0, Vector3f v1, Vector3f v2) {
-		final float EPSILON = 0.0000001f;
+		final float EPSILON = 1e-7f;
+		final float tolerance = 1e-5f;
 
 		Vector3f edge1 = Vector3f.subtract(v1, v0);
 		Vector3f edge2 = Vector3f.subtract(v2, v0);
@@ -283,7 +283,7 @@ public class Mesh {
 		Vector3f h = Vector3f.cross(ray.getDirection(), edge2);
 		float a = Vector3f.dot(edge1, h);
 
-		if (a > -EPSILON && a < EPSILON) {
+		if (Math.abs(a) < EPSILON) {
 			return null;
 		}
 
@@ -291,14 +291,14 @@ public class Mesh {
 		Vector3f s = Vector3f.subtract(ray.getOrigin(), v0);
 		float u = f * Vector3f.dot(s, h);
 
-		if (u < 0.0f || u > 1.0f) {
+		if (u < -tolerance || u > 1.0f + tolerance) {
 			return null;
 		}
 
 		Vector3f q = Vector3f.cross(s, edge1);
 		float v = f * Vector3f.dot(ray.getDirection(), q);
 
-		if (v < 0.0f || u + v > 1.0f) {
+		if (v < -tolerance || u + v > 1.0f + tolerance) {
 			return null;
 		}
 

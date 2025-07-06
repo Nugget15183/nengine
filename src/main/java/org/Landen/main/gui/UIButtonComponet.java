@@ -4,7 +4,8 @@ public class UIButtonComponet extends UIComponet{
     private String label;
     private Runnable onClick;
 
-    public UIButtonComponet(String label, Runnable onClick) {
+    public UIButtonComponet(String id, String label, Runnable onClick) {
+        super(id);
         this.label = label;
         this.onClick = onClick;
     }

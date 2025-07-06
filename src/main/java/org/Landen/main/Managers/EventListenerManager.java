@@ -12,7 +12,7 @@ public class EventListenerManager {
         listeners.add(listener);
     }
 
-    public void tick() {
+    public static void tick() {
         for(int i=0; i < listeners.toArray().length; i++) {
             if (listeners.get(i) != null) {
                 listeners.get(i).tick();
