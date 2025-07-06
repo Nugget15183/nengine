@@ -17,12 +17,16 @@ dependencies {
     implementation("org.lwjgl:lwjgl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-nuklear:$lwjglVersion")
+    implementation("io.github.spair:imgui-java-binding:1.86.10")
+    implementation("io.github.spair:imgui-java-lwjgl3:1.86.10")
+
+    implementation("io.github.spair:imgui-java-binding:1.86.10")
+    implementation("io.github.spair:imgui-java-lwjgl3:1.86.10")
+    runtimeOnly("io.github.spair:imgui-java-natives-windows:1.86.10")
 
     runtimeOnly("org.lwjgl:lwjgl::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-glfw::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-opengl::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-nuklear::$lwjglNatives")
 
     // Optional modules you're now missing
     implementation("org.lwjgl:lwjgl-assimp:$lwjglVersion")

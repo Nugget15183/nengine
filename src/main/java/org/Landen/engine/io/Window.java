@@ -1,5 +1,8 @@
 package org.Landen.engine.io;
 
+import imgui.ImGui;
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
 import org.Landen.engine.maths.Matrix4f;
 import org.Landen.engine.maths.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -22,7 +25,18 @@ public class Window {
 	private boolean isFullscreen;
 	private int[] windowPosX = new int[1], windowPosY = new int[1];
 	private Matrix4f projection;
-	
+	private static ImGuiImplGl3 imGuiGl3;
+
+	public static ImGuiImplGl3 getImGuiGl3() {
+		return imGuiGl3;
+	}
+
+	public static ImGuiImplGlfw getImGuiGlfw() {
+		return imGuiGlfw;
+	}
+
+	private static ImGuiImplGlfw imGuiGlfw;
+
 	public Window(int width, int height, String title) {
 		this.width = width;
 		this.height = height;
@@ -35,29 +49,29 @@ public class Window {
 			System.err.println("ERROR: GLFW wasn't initializied");
 			return;
 		}
-		
 		input = new Input();
 		window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
-		
 		if (window == 0) {
 			System.err.println("ERROR: Window wasn't created");
 			return;
 		}
-		
 		GLFWVidMode videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 		windowPosX[0] = (videoMode.width() - width) / 2;
 		windowPosY[0] = (videoMode.height() - height) / 2;
 		GLFW.glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
 		GLFW.glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+		// ImGui initialization
+		ImGui.createContext();
+		imGuiGlfw = new ImGuiImplGlfw();
+		imGuiGl3 = new ImGuiImplGl3();
+		imGuiGlfw.init(window, true); // Use your actual window handle
+		imGuiGl3.init("#version 330 core");
+
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		
 		createCallbacks();
-		
 		GLFW.glfwShowWindow(window);
-		
 		GLFW.glfwSwapInterval(1);
-		
 		time = System.currentTimeMillis();
 	}
 	
@@ -102,6 +116,9 @@ public class Window {
 	}
 	
 	public void destroy() {
+		imGuiGl3.dispose();
+		imGuiGlfw.dispose();
+		ImGui.destroyContext();
 		input.destroy();
 		sizeCallback.free();
 		GLFW.glfwWindowShouldClose(window);
