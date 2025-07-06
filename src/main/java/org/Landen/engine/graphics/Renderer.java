@@ -4,7 +4,7 @@ import org.Landen.engine.io.Window;
 import org.Landen.engine.maths.Matrix4f;
 import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.objects.Camera;
-import org.Landen.engine.objects.nonliteral.GameObject;
+import org.Landen.engine.objects.GameObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;

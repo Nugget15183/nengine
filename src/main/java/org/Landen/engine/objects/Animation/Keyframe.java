@@ -1,7 +1,7 @@
 package org.Landen.engine.objects.Animation;
 
 import org.Landen.engine.maths.Vector3f;
-import org.Landen.engine.objects.nonliteral.GameObject;
+import org.Landen.engine.objects.GameObject;
 
 public class Keyframe {
     private final Vector3f rot;

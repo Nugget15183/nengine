@@ -4,7 +4,6 @@ package org.Landen.engine.objects;
 import org.Landen.engine.io.Input;
 import org.Landen.engine.maths.Ray;
 import org.Landen.engine.maths.Vector3f;
-import org.Landen.engine.objects.nonliteral.GameObject;
 import org.lwjgl.glfw.GLFW;
 
 

@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Input {
 	static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -17,8 +18,7 @@ public class Input {
 	private static boolean[] buttons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
 	private static double mouseX, mouseY;
 	private static double scrollX, scrollY;
-	private static double frameScrollY = 0;
-
+	
 	private GLFWKeyCallback keyboard;
 	private GLFWCursorPosCallback mouseMove;
 	private GLFWMouseButtonCallback mouseButtons;
@@ -45,24 +45,15 @@ public class Input {
 				if(buttons[button]) Main.onMousePress(button,action,mods);
 			}
 		};
-
+		
 		mouseScroll = new GLFWScrollCallback() {
 			public void invoke(long window, double offsetx, double offsety) {
 				scrollX += offsetx;
 				scrollY += offsety;
-				frameScrollY += offsety;
 			}
 		};
 	}
-
-	public static double getFrameScrollY() {
-		return frameScrollY;
-	}
-
-	public static void resetFrameScrollY() {
-		frameScrollY = 0;
-	}
-
+	
 	public static boolean isKeyDown(int key) {
 		return keys[key];
 	}
@@ -77,6 +68,7 @@ public class Input {
 		mouseButtons.free();
 		mouseScroll.free();
 	}
+
 	public static Vector2f getMousePosition() {
 		return new Vector2f((float) mouseX, (float) mouseY);
 	}

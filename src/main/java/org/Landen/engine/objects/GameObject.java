@@ -1,4 +1,4 @@
-package org.Landen.engine.objects.nonliteral;
+package org.Landen.engine.objects;
 
 import org.Landen.engine.graphics.Mesh;
 import org.Landen.engine.maths.Vector3f;

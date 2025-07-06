@@ -1,6 +1,6 @@
 package org.Landen.main.Managers;
 
-import org.Landen.engine.objects.nonliteral.Scene;
+import org.Landen.engine.objects.Scene;
 
 import java.util.ArrayList;
 import java.util.HashMap;
