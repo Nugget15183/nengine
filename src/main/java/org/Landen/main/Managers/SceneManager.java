@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class SceneManager {
     private static HashMap<Scene, Boolean> scenes = new HashMap<>();
 
-    private static int maxLoadedScenes = 1;
+    private static final int maxLoadedScenes = 100;
     private static int loadedScenes = 0;
 
     private static ArrayList<Scene> loadedSceneObjects = new ArrayList<>();
