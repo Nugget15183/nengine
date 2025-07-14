@@ -32,6 +32,22 @@ public class Material {
 		return reflectiveness;
 	}
 
+	public void setAmbient(float ambient) {
+		this.ambient = ambient;
+	}
+
+	public void setReflectiveness(float reflectiveness) {
+		this.reflectiveness = reflectiveness;
+	}
+
+	public void setColor3(Vector3f color3) {
+		this.color3 = color3;
+	}
+
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
+	}
+
 	public float getAmbient() {
 		return ambient;
 	}

@@ -1,6 +1,7 @@
 package org.Landen.main.gui;
 
 import imgui.ImGui;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class Screen {
     }
 
     public void renderImGui() {
-        if(docked) {
+        if (docked) {
             float windowWidth = 300.0f; // Sidebar width
             float windowHeight = ImGui.getIO().getDisplaySizeY();
             float windowPosX = ImGui.getIO().getDisplaySizeX() - windowWidth;
@@ -36,14 +37,24 @@ public class Screen {
             ImGui.setNextWindowPos(windowPosX, windowPosY);
             ImGui.setNextWindowSize(windowWidth, windowHeight);
 
-            ImGui.begin(title, ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse);
+            ImGui.begin(title, ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
         } else {
-            imgui.ImGui.begin(title);
+            ImGui.begin(title);
         }
-        for (UIComponet component : components) {
-            component.renderImGui();
+        ImGui.pushStyleVar(ImGuiStyleVar.FrameBorderSize, 1.0f);
+        float availY = ImGui.getContentRegionAvailY();
+        int n = components.size();
+        float slice = availY / n;
+
+        for (UIComponet comp : components) {
+            if (comp instanceof UIGroupComponet)
+                ((UIGroupComponet) comp).renderImGui(slice);
+            else
+                comp.renderImGui();
         }
-        imgui.ImGui.end();
+
+        ImGui.popStyleVar();
+        ImGui.end();
     }
 
     public UIComponet getComponentByID(String selected) {

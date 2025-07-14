@@ -20,6 +20,10 @@ public class UISliderComponet extends UIComponet {
         this.listener = listener;
     }
 
+    public void overrideListener(ValueChangedListener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public void renderImGui() {
         float[] v = { value };

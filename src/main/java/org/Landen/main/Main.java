@@ -11,9 +11,11 @@ import org.Landen.engine.objects.Camera;
 import org.Landen.engine.objects.GameObject;
 import org.Landen.main.Managers.*;
 import org.Landen.main.events.TickEventListener;
+import org.Landen.main.gui.Screen;
+import org.Landen.main.gui.UIGroupComponet;
 import org.Landen.main.gui.UILabelComponet;
-import org.Landen.main.presets.Guis;
-import org.Landen.main.presets.Scenes;
+import org.Landen.main.gui.UISliderComponet;
+import org.Landen.main.presets.presets;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -104,11 +106,10 @@ public class Main implements Runnable {
 	}
 
 	private void onLoad() {
-		Guis.LoadSideEditorMenu();
-		Scenes.load();
+		presets.loadAll();
 
 		EventListenerManager.register(new TickEventListener(() -> {;
-			if (Input.isButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+			if (Input.isButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT) && looking) {
 				double mouseX = Input.getMouseX();
 				double mouseY = Input.getMouseY();
 				int width = window.getWidth();
@@ -125,11 +126,48 @@ public class Main implements Runnable {
 			}
 
 			if(selectedObject != null) {
-				UILabelComponet ulc = (UILabelComponet) GuiManager.getScreenByID("mainsidebar").getComponentByID("selectedobjectdisplay");
+				Screen screen = GuiManager.getScreenByID("mainsidebar");
+
+				UIGroupComponet matgroup = (UIGroupComponet) screen.getComponentByID("materialGroup");
+				UIGroupComponet basegroup = (UIGroupComponet) screen.getComponentByID("baseGroup");
+
+				UILabelComponet ulc = (UILabelComponet) basegroup.getComponentByID("selectedobjectdisplay");
 				ulc.setText("Selected: " + selectedObject.getName());
+
+				UISliderComponet ursc = (UISliderComponet) matgroup.getComponentByID("reflectiveslider");
+				ursc.setValue(selectedObject.getMesh().getMaterial().getReflectiveness());
+
+				UISliderComponet uasc = (UISliderComponet) matgroup.getComponentByID("ambientslider");
+				uasc.setValue(selectedObject.getMesh().getMaterial().getAmbient());
+
+				ursc.overrideListener(new UISliderComponet.ValueChangedListener() {
+					@Override
+					public void onValueChanged(float newValue) {
+						if(selectedObject != null) {
+							selectedObject.getMesh().getMaterial().setReflectiveness(newValue);
+						}
+					}
+				});
+
+				uasc.overrideListener(new UISliderComponet.ValueChangedListener() {
+					@Override
+					public void onValueChanged(float newValue) {
+						if(selectedObject != null) {
+							selectedObject.getMesh().getMaterial().setAmbient(newValue);
+						}
+					}
+				});
             } else {
-				UILabelComponet ulc = (UILabelComponet) GuiManager.getScreenByID("mainsidebar").getComponentByID("selectedobjectdisplay");
-				ulc.setText("None");
+				Screen screen = GuiManager.getScreenByID("mainsidebar");
+
+				UIGroupComponet matgroup = (UIGroupComponet) screen.getComponentByID("materialGroup");
+				UIGroupComponet basegroup = (UIGroupComponet) screen.getComponentByID("baseGroup");
+
+				UILabelComponet ulc = (UILabelComponet) basegroup.getComponentByID("selectedobjectdisplay");
+				ulc.setText("Selected: None");
+
+				UISliderComponet usc = (UISliderComponet) matgroup.getComponentByID("reflectiveslider");
+				usc.setValue(0);
 			}
 		}));
 	}

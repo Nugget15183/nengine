@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Scenes {
     public static ArrayList<Scene> scenes = new ArrayList<>();
 
-    public static void load() {
+    public static void loadTest() {
         ArrayList<GameObject> s1_objs = new ArrayList<>();
 
         Material m = new Material(new Vector4f(0.5f,0.5f,0.5f,1f),1f,0.5f);
