@@ -11,6 +11,7 @@ import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.objects.Camera;
 import org.Landen.engine.objects.GameObject;
 import org.Landen.engine.objects.Scene;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
@@ -98,6 +99,9 @@ public class MeshManager {
     }
 
     public static void render(Renderer renderer, Camera camera) {
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthFunc(GL11.GL_LESS);
+
         for(GameObject gameObject : gameObjects) {
             if(gameObject != null) {
                 renderer.renderMesh(gameObject, camera);

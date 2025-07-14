@@ -1,6 +1,5 @@
 package org.Landen.main;
 
-import org.Landen.engine.graphics.Mesh;
 import org.Landen.engine.graphics.Renderer;
 import org.Landen.engine.graphics.Shader;
 import org.Landen.engine.io.Input;
@@ -9,6 +8,7 @@ import org.Landen.engine.maths.Ray;
 import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.objects.Camera;
 import org.Landen.engine.objects.GameObject;
+import org.Landen.engine.objects.Skybox;
 import org.Landen.main.Managers.*;
 import org.Landen.main.events.TickEventListener;
 import org.Landen.main.gui.Screen;
@@ -29,6 +29,7 @@ public class Main implements Runnable {
 	private static final int WIDTH = 1280, HEIGHT = 760;
 	private static boolean looking = true;
 	private boolean hasLoaded = false;
+	private Skybox skybox;
 
 	private long lastFrameTime = System.nanoTime();
 	private float deltaTime;
@@ -68,6 +69,7 @@ public class Main implements Runnable {
 		window.create();
 		shader.create();
 		renderer.init();
+		skybox = new Skybox("common_blue");
 	}
 
 	private boolean isOpenGLReady() {
@@ -94,8 +96,11 @@ public class Main implements Runnable {
 	}
 
 	private void render() {
+		skybox.render(camera, window.getProjectionMatrix());
+
 		MeshManager.render(renderer, camera);
 		GuiManager.tick();
+
 		window.swapBuffers();
 	}
 
@@ -108,7 +113,7 @@ public class Main implements Runnable {
 	private void onLoad() {
 		presets.loadAll();
 
-		EventListenerManager.register(new TickEventListener(() -> {;
+		EventListenerManager.register(new TickEventListener(() -> {
 			if (Input.isButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT) && looking) {
 				double mouseX = Input.getMouseX();
 				double mouseY = Input.getMouseY();
@@ -119,16 +124,16 @@ public class Main implements Runnable {
 
 				ArrayList<GameObject> hit = MeshManager.intersects(ray);
 				if ((long) hit.size() > 0) {
-					selectedObject = hit.get(0);
+					selectedObject = hit.getFirst();
 				} else {
 					selectedObject = null;
 				}
 			}
 
-			if(selectedObject != null) {
-				Screen screen = GuiManager.getScreenByID("mainsidebar");
-
-				UIGroupComponet matgroup = (UIGroupComponet) screen.getComponentByID("materialGroup");
+            Screen screen = GuiManager.getScreenByID("mainsidebar");
+			assert screen != null;
+            if(selectedObject != null) {
+                UIGroupComponet matgroup = (UIGroupComponet) screen.getComponentByID("materialGroup");
 				UIGroupComponet basegroup = (UIGroupComponet) screen.getComponentByID("baseGroup");
 
 				UILabelComponet ulc = (UILabelComponet) basegroup.getComponentByID("selectedobjectdisplay");
@@ -140,27 +145,20 @@ public class Main implements Runnable {
 				UISliderComponet uasc = (UISliderComponet) matgroup.getComponentByID("ambientslider");
 				uasc.setValue(selectedObject.getMesh().getMaterial().getAmbient());
 
-				ursc.overrideListener(new UISliderComponet.ValueChangedListener() {
-					@Override
-					public void onValueChanged(float newValue) {
-						if(selectedObject != null) {
-							selectedObject.getMesh().getMaterial().setReflectiveness(newValue);
-						}
-					}
-				});
+				ursc.overrideListener(newValue -> {
+                    if(selectedObject != null) {
+                        selectedObject.getMesh().getMaterial().setReflectiveness(newValue);
+                    }
+                });
 
-				uasc.overrideListener(new UISliderComponet.ValueChangedListener() {
-					@Override
-					public void onValueChanged(float newValue) {
-						if(selectedObject != null) {
-							selectedObject.getMesh().getMaterial().setAmbient(newValue);
-						}
-					}
-				});
+				uasc.overrideListener(newValue -> {
+                    if(selectedObject != null) {
+                        selectedObject.getMesh().getMaterial().setAmbient(newValue);
+                    }
+                });
             } else {
-				Screen screen = GuiManager.getScreenByID("mainsidebar");
 
-				UIGroupComponet matgroup = (UIGroupComponet) screen.getComponentByID("materialGroup");
+                UIGroupComponet matgroup = (UIGroupComponet) screen.getComponentByID("materialGroup");
 				UIGroupComponet basegroup = (UIGroupComponet) screen.getComponentByID("baseGroup");
 
 				UILabelComponet ulc = (UILabelComponet) basegroup.getComponentByID("selectedobjectdisplay");
@@ -179,8 +177,6 @@ public class Main implements Runnable {
 	}
 
 	public static void onMousePress(int key, int action, int mods) {
-		if (key == GLFW.GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_PRESS) {
 
-		}
 	}
 }

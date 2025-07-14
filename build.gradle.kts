@@ -13,7 +13,6 @@ repositories {
 }
 
 dependencies {
-    // Core LWJGL
     implementation("org.lwjgl:lwjgl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
@@ -28,14 +27,14 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-glfw::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-opengl::$lwjglNatives")
 
-    // Optional modules you're now missing
     implementation("org.lwjgl:lwjgl-assimp:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
+
+    implementation("org.luaj:luaj-jse:3.0.1")
 
     runtimeOnly("org.lwjgl:lwjgl-assimp::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-stb::$lwjglNatives")
 
-    // Testing
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }

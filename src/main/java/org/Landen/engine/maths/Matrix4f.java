@@ -125,7 +125,13 @@ public class Matrix4f {
 		
 		return result;
 	}
-	
+
+	public void removeTranslation() {
+		set(3, 0, 0);
+		set(3, 1, 0);
+		set(3, 2, 0);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

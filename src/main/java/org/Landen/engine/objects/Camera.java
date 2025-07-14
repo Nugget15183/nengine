@@ -50,8 +50,7 @@ public class Camera {
 			float newPitch = rotation.getX() + cameraup;
 			float newYaw = rotation.getY() + (-dx * mouseSensitivity);
 
-			// Clamp pitch to prevent looking past straight up/down (in radians)
-			newPitch = Math.max(-90f, Math.min(90f, newPitch)); // -π/2 to π/2
+			newPitch = Math.max(-90f, Math.min(90f, newPitch));
 
 			rotation = new Vector3f(newPitch, newYaw, rotation.getZ());
 
