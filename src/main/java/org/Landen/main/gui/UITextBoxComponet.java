@@ -19,6 +19,10 @@ public class UITextBoxComponet extends UIComponet {
         this.listener = listener;
     }
 
+    public void overrideListener(TextChangedListener newListener) {
+        this.listener = newListener;
+    }
+
     @Override
     public void renderImGui() {
         String oldText = text.get();

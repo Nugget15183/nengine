@@ -26,8 +26,16 @@ public class Guis {
             }
         }));
 
+        UIGroupComponet scriptGroup = new UIGroupComponet("scriptGroup", "Script Editor");
+        scriptGroup.addComponent(new UITextBoxComponet("scriptbox","Script Editor","Start Typing Here...", 64, newText -> System.out.println("Script Text Changed: " + newText)));
+
+        scriptGroup.addComponent(new UIButtonComponet("runScriptButton", "Run Script", () -> {
+            System.out.println("Run Script Button Pressed");
+        }));
+
         screen.addComponent(baseGroup);
         screen.addComponent(matgroup);
+        screen.addComponent(scriptGroup);
 
         //screen.addComponent(new UITextBoxComponet("Test TextBox", "Default Text", 64, new UITextBoxComponet.TextChangedListener() {
             //@Override

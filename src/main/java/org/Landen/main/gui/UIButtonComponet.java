@@ -10,6 +10,10 @@ public class UIButtonComponet extends UIComponet{
         this.onClick = onClick;
     }
 
+    public void overrideListener(Runnable onClick) {
+        this.onClick = onClick;
+    }
+
     @Override
     public void renderImGui() {
         if (imgui.ImGui.button(label)) {
