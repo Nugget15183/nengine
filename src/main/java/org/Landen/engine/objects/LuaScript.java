@@ -15,6 +15,15 @@ public class LuaScript {
         this.contents = newContents;
     }
 
+    public boolean compile(Globals globals) {
+        try {
+            globals.load(contents);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public void run(Globals globals) {
         LuaValue chunk = globals.load(contents);
         chunk.call();

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UIGroupComponet extends UIComponet {
-    private List<UIComponet> children = new ArrayList<>();
+    protected List<UIComponet> components = new ArrayList<>();
     private String title = "";
 
     public void setTitle(String title) {
@@ -21,7 +21,7 @@ public class UIGroupComponet extends UIComponet {
     }
 
     public void addComponent(UIComponet component) {
-        children.add(component);
+        components.add(component);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class UIGroupComponet extends UIComponet {
             ImGui.text(title);
         }
 
-        for (UIComponet child : children) {
+        for (UIComponet child : components) {
             child.renderImGui();
         }
         ImGui.endGroup();
@@ -40,7 +40,7 @@ public class UIGroupComponet extends UIComponet {
     }
 
     public Object getComponentByID(String id) {
-        for (UIComponet child : children) {
+        for (UIComponet child : components) {
             if (child.getId().equals(id)) {
                 return child;
             }
@@ -57,9 +57,13 @@ public class UIGroupComponet extends UIComponet {
                 ImGui.getContentRegionAvailX(),
                 fixedHeight,
                 true);
-        for (UIComponet child : children) child.renderImGui();
+        for (UIComponet child : components) child.renderImGui();
         ImGui.endChild();
         ImGui.spacing();
+    }
+
+    public List<UIComponet> getComponents() {
+        return components;
     }
 
 }

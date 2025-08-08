@@ -25,6 +25,8 @@ public class Input {
 	private GLFWMouseButtonCallback mouseButtons;
 	private GLFWScrollCallback mouseScroll;
 	
+	private boolean destroyed = false;
+
 	public Input() {
 		keyboard = new GLFWKeyCallback() {
 			public void invoke(long window, int key, int scancode, int action, int mods) {
@@ -76,10 +78,24 @@ public class Input {
 	}
 
 	public void destroy() {
-		keyboard.free();
-		mouseMove.free();
-		mouseButtons.free();
-		mouseScroll.free();
+		if (destroyed) return;
+		destroyed = true;
+		if (keyboard != null) {
+			keyboard.free();
+			keyboard = null;
+		}
+		if (mouseMove != null) {
+			mouseMove.free();
+			mouseMove = null;
+		}
+		if (mouseButtons != null) {
+			mouseButtons.free();
+			mouseButtons = null;
+		}
+		if (mouseScroll != null) {
+			mouseScroll.free();
+			mouseScroll = null;
+		}
 	}
 
 	public static Vector2f getMousePosition() {

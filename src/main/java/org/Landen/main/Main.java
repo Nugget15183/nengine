@@ -10,6 +10,7 @@ import org.Landen.engine.objects.Camera;
 import org.Landen.engine.objects.GameObject;
 import org.Landen.engine.objects.Skybox;
 import org.Landen.main.Managers.*;
+import org.Landen.main.presets.Guis;
 import org.Landen.main.presets.presets;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -23,6 +24,7 @@ public class Main implements Runnable {
 	private boolean hasLoaded = false;
 	private Skybox skybox;
 	private Run run;
+	private Input input;
 
 	private long lastFrameTime = System.nanoTime();
 	private float deltaTime;
@@ -62,6 +64,7 @@ public class Main implements Runnable {
 		renderer.init();
 		skybox = new Skybox("common_blue");
 		run = new Run(window, camera);
+		input = new Input();
 	}
 
 	private boolean isOpenGLReady() {
@@ -89,12 +92,12 @@ public class Main implements Runnable {
 
 		MeshManager.render(renderer, camera);
 		GuiManager.tick();
-
 		window.swapBuffers();
 	}
 
 	private void close() {
-		window.destroy();
+		if (input != null) input.destroy();
+		if (window != null) window.destroy();
 		shader.destroy();
 		MeshManager.clear();
 	}
@@ -102,6 +105,7 @@ public class Main implements Runnable {
 	private void onLoad() {
 		presets.loadAll();
 		run.onLoad();
+		Guis.loadHierarchy(SceneManager.getCurrectScene());
 	}
 
 	public static void onKeyPress(int key, int scancode, int action, int mods) {

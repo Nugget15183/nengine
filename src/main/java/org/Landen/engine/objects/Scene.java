@@ -7,13 +7,21 @@ import java.util.ArrayList;
 public class Scene {
     private final ArrayList<GameObject> objects;
 
-    public Scene(ArrayList<GameObject> objects) {
+    private GameObject rootObject;
+    public GameObject getRootObject() {
+        return rootObject;
+    }
+
+    public Scene(GameObject rootObject,ArrayList<GameObject> objects) {
         this.objects = objects;
+        this.rootObject = rootObject;
     }
 
     public void addObject(GameObject obj) {
         objects.add(obj);
     }
+
+
 
     public void load(Boolean loaded) {
         SceneManager.update(this, loaded);

@@ -33,6 +33,7 @@ public class MeshManager {
     private static GameObject createGameObject(String name, Mesh mesh, Vector3f pos, Vector3f rot, Vector3f scale) {
         GameObject gameObject = new GameObject(name, pos, rot, scale, mesh);
         mesh.create();
+        mesh.centerAroundOrigin();
         return gameObject;
     }
 
@@ -45,6 +46,7 @@ public class MeshManager {
         GameObject gameObject = new GameObject(name, pos, rot, scale, mesh);
         gameObjects.add(gameObject);
         mesh.create();
+        mesh.centerAroundOrigin();
         return gameObject;
     }
 
@@ -62,11 +64,7 @@ public class MeshManager {
     }
 
     public static void unloadGameObject(GameObject g) {
-        for(GameObject gameObject : gameObjects) {
-            if(gameObject == g) {
-                gameObjects.remove(gameObject);
-            }
-        }
+        gameObjects.removeIf(gameObject -> gameObject == g);
     }
 
     public static ArrayList<GameObject> intersects(Ray ray) {

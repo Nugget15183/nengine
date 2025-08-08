@@ -1,7 +1,6 @@
 package org.Landen.main.presets;
 
 import org.Landen.engine.graphics.Material;
-import org.Landen.engine.graphics.Mesh;
 import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.maths.Vector4f;
 import org.Landen.engine.objects.GameObject;
@@ -19,18 +18,28 @@ public class Scenes {
 
         Material m = new Material(new Vector4f(0.5f,0.5f,0.5f,1f),1f,0.5f);
 
-        GameObject g = MeshManager.createGameObjectFromMesh(
+        GameObject parent = MeshManager.createGameObjectFromMesh(
                 "monkey",
-                "models/usermodels/monkey.obj",
+                "models/models/monkey.obj",
                 m,
-                new Vector3f(0,0,-5),
+                new Vector3f(-1.5f,0,-5),
                 new Vector3f(0,0,0),
                 new Vector3f(1,1,1)
         );
 
-        s1_objs.add(g);
+        GameObject child = MeshManager.createGameObjectFromMesh(
+                "monkey",
+                "models/models/monkey.obj",
+                m,
+                new Vector3f(-1.5f,-3,-5),
+                new Vector3f(0,0,0),
+                new Vector3f(.5f,.5f,.5f)
+        );
 
-        Scene s1 = new Scene(s1_objs);
+        s1_objs.add(parent);
+
+        Scene s1 = new Scene(parent,s1_objs);
+        parent.addChild(child);
 
         scenes.add(s1);
 
@@ -39,6 +48,8 @@ public class Scenes {
 
     public static Scene loadDragableArrows(Vector3f center) {
         ArrayList<GameObject> arrows = new ArrayList<>();
+
+        center.print();
 
         Material l_r_material = new Material(new Vector4f(1f, 0f, 0f, .5f), 1f, 0.5f);
         Material f_b_material = new Material(new Vector4f(0f, 0f, 1f, .5f), 1f, 0.5f);
@@ -75,8 +86,7 @@ public class Scenes {
         arrows.add(u_d);
         arrows.add(f_b);
 
-        Scene s = new Scene(arrows);
-        return s;
+        return new Scene(f_b,arrows);
     }
 
     public static ArrayList<Scene> getScenes() {

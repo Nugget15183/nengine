@@ -8,13 +8,8 @@ import org.Landen.engine.objects.Animation.Keyframe;
 import org.Landen.engine.objects.GameObject;
 import org.Landen.engine.objects.Scene;
 import org.Landen.main.Managers.AnimationManager;
-import org.Landen.main.Managers.GuiManager;
 import org.Landen.main.Managers.MeshManager;
 import org.Landen.main.Managers.SceneManager;
-import org.Landen.main.gui.Screen;
-import org.Landen.main.gui.UIButtonComponet;
-import org.Landen.main.gui.UISliderComponet;
-import org.Landen.main.gui.UITextBoxComponet;
 
 import java.util.ArrayList;
 
@@ -26,7 +21,7 @@ public class Demos {
 
         GameObject g = MeshManager.createGameObjectFromMesh(
                 "monkey",
-                "models/usermodels/monkey.obj",
+                "models/models/monkey.obj",
                 m,
                 new Vector3f(0,0,-5),
                 new Vector3f(0,0,0),
@@ -35,7 +30,7 @@ public class Demos {
 
         objs.add(g);
 
-        Scene s = new Scene(objs);
+        Scene s = new Scene(g, objs);
         SceneManager.insert(s, true);
     }
 

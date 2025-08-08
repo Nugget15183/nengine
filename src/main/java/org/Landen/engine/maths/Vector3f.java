@@ -108,4 +108,8 @@ public class Vector3f {
 	public void setZ(float z) {
 		this.z = z;
 	}
+
+	public void print() {
+		System.out.println("Vector3f(" + x + ", " + y + ", " + z + ")");
+	}
 }

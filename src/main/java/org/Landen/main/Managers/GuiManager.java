@@ -14,6 +14,14 @@ public class GuiManager {
      public static void addScreen(Screen screen) {
         screens.add(screen);
     }
+    public static Screen getScreen(String id) {
+        for(Screen screen : screens) {
+            if (Objects.equals(screen.getId(), id)) {
+                return screen;
+            }
+        }
+        return  null;
+    }
 
     public static void tick() {
         Window.getImGuiGlfw().newFrame();

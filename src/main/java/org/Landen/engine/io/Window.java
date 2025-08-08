@@ -26,6 +26,7 @@ public class Window {
 	private int[] windowPosX = new int[1], windowPosY = new int[1];
 	private Matrix4f projection;
 	private static ImGuiImplGl3 imGuiGl3;
+	private boolean destroyed = false;
 
 	public static ImGuiImplGl3 getImGuiGl3() {
 		return imGuiGl3;
@@ -116,13 +117,29 @@ public class Window {
 	}
 	
 	public void destroy() {
-		imGuiGl3.dispose();
-		imGuiGlfw.dispose();
+		if (destroyed) return;
+		destroyed = true;
+		if (imGuiGl3 != null) {
+			imGuiGl3.dispose();
+			imGuiGl3 = null;
+		}
+		if (imGuiGlfw != null) {
+			imGuiGlfw.dispose();
+			imGuiGlfw = null;
+		}
 		ImGui.destroyContext();
-		input.destroy();
-		sizeCallback.free();
-		GLFW.glfwWindowShouldClose(window);
-		GLFW.glfwDestroyWindow(window);
+		if (input != null) {
+			input.destroy();
+			input = null;
+		}
+		if (sizeCallback != null) {
+			sizeCallback.free();
+			sizeCallback = null;
+		}
+		if (window != 0) {
+			GLFW.glfwDestroyWindow(window);
+			window = 0;
+		}
 		GLFW.glfwTerminate();
 	}
 	
@@ -169,3 +186,4 @@ public class Window {
 		return projection;
 	}
 }
+

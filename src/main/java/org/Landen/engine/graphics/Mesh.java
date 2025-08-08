@@ -16,6 +16,7 @@ import org.lwjgl.system.MemoryUtil;
 public class Mesh {
 	private Vertex[] vertices;
 	private int[] indices;
+	private Vector3f[] originalOffsets;
 	private Material material;
 	private int vao, pbo, ibo, cbo, tbo, nbo;
 
@@ -69,6 +70,13 @@ public class Mesh {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		Vector3f center = getAvgPosition();
+		originalOffsets = new Vector3f[vertices.length];
+		for (int i = 0; i < vertices.length; i++) {
+			originalOffsets[i] = Vector3f.subtract(vertices[i].getPosition(), center);
+		}
+
 	}
 
 	private int storeData(FloatBuffer buffer, int index, int size) {
@@ -135,25 +143,19 @@ public class Mesh {
 	}
 
 	public void setPosition(Vector3f position) {
-		ArrayList<Vector3f> d = new ArrayList<Vector3f>();
-		Vector3f center = getAvgPosition();
+		if (originalOffsets == null || originalOffsets.length != vertices.length) return;
 
-		int i = 0;
-
-		for (Vertex v : vertices) {
-			d.add(Vector3f.subtract(v.getPosition(),center));
-		}
-
-		for (Vertex vertex : vertices) {
-			Vector3f pos = vertex.getPosition();
-			pos.setX(position.getX() + d.get(i).getX());
-			pos.setY(position.getY() + d.get(i).getY());
-			pos.setZ(position.getZ() + d.get(i).getZ());
-			i++;
+		for (int i = 0; i < vertices.length; i++) {
+			Vector3f offset = originalOffsets[i];
+			Vector3f pos = vertices[i].getPosition();
+			pos.set(position.getX() + offset.getX(),
+					position.getY() + offset.getY(),
+					position.getZ() + offset.getZ());
 		}
 
 		updatePositionBuffer();
 	}
+
 
 	public Vector3f getAvgPosition() {
 		Vector3f center = new Vector3f(0,0,0);
@@ -170,7 +172,26 @@ public class Mesh {
 		return center;
 	}
 
-	private Vector3f rotateVector(Vector3f vector, float cosX, float sinX, float cosY, float sinY, float cosZ, float sinZ) {
+	public void centerAroundOrigin() {
+		Vector3f center = getAvgPosition();
+
+		for (Vertex vertex : vertices) {
+			Vector3f pos = vertex.getPosition();
+			pos.setX(pos.getX() - center.getX());
+			pos.setY(pos.getY() - center.getY());
+			pos.setZ(pos.getZ() - center.getZ());
+		}
+
+		// Recalculate original offsets to match the new centered vertices
+		originalOffsets = new Vector3f[vertices.length];
+		for (int i = 0; i < vertices.length; i++) {
+			originalOffsets[i] = Vector3f.subtract(vertices[i].getPosition(), new Vector3f(0, 0, 0));
+		}
+
+		updatePositionBuffer();
+	}
+
+	public Vector3f rotateVector(Vector3f vector, float cosX, float sinX, float cosY, float sinY, float cosZ, float sinZ) {
 		float x = vector.getX();
 		float y = vector.getY();
 		float z = vector.getZ();

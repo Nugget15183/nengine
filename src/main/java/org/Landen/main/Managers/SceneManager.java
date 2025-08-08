@@ -11,6 +11,12 @@ public class SceneManager {
     private static final int maxLoadedScenes = 100;
     private static int loadedScenes = 0;
 
+    public static Scene getCurrectScene() {
+        return currectScene;
+    }
+
+    private static Scene currectScene;
+
     private static ArrayList<Scene> loadedSceneObjects = new ArrayList<>();
 
     public static void insert(Scene s, Boolean load) {
@@ -42,6 +48,8 @@ public class SceneManager {
             loadedSceneObjects.add(s);
             MeshManager.loadScene(s);
         }
+
+        currectScene = s;
     }
 
     private static void unloadScene(Scene s) {
