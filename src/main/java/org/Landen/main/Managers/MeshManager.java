@@ -14,6 +14,7 @@ import org.Landen.engine.objects.Scene;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MeshManager {
     public static ArrayList<Mesh> meshes = new ArrayList<>();
@@ -24,6 +25,18 @@ public class MeshManager {
         meshes.add(mesh);
         return updateGameObjects(name,mesh, pos, rot, scale);
     }
+
+    public static void registerGameObject(GameObject g) {
+        if (g == null) return;
+        Mesh m = g.getMesh();
+        if (m != null) {
+            m.create();
+            m.centerAroundOrigin();
+            meshes.add(m);
+        }
+        gameObjects.add(g);
+    }
+
 
     public static GameObject createGameObjectFromMesh(String name, String filePath, Material material, Vector3f pos, Vector3f rot, Vector3f scale) {
         Mesh mesh = ModelLoader.loadModel(filePath, material);
@@ -115,5 +128,24 @@ public class MeshManager {
         }
         meshes.clear();
         gameObjects.clear();
+    }
+
+    public static class MeshPreset {
+        public String displayName;
+        public String filePath;
+        public MeshPreset(String displayName, String filePath) {
+            this.displayName = displayName;
+            this.filePath = filePath;
+        }
+
+        public static List<MeshPreset> meshPresets = new ArrayList<>();
+
+        static {
+            // Add all available meshes here
+            meshPresets.add(new MeshPreset("Cube", "models/models/cube.obj"));
+            meshPresets.add(new MeshPreset("Sphere", "models/models/sphere.obj"));
+            meshPresets.add(new MeshPreset("Plane", "models/models/plane.obj"));
+            // Add more here as needed
+        }
     }
 }

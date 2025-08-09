@@ -56,6 +56,13 @@ public class Material {
 		this.path = path;
     }
 
+	public Material() {//default
+		this.color3 = new Vector3f(.5f, .5f, .5f);
+		this.alpha = 1;
+		this.reflectiveness = .5f;
+		this.ambient =.5f;
+	}
+
 	public Material(Vector4f rgba, float reflectiveness, float ambient) {
 		this.color3 = new Vector3f(rgba.getX(), rgba.getY(), rgba.getZ());
 		this.alpha = rgba.getW();

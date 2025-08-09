@@ -1,7 +1,7 @@
 package org.Landen.engine.maths;
 
 public class Vector3f {
-	private float x, y, z;
+	public float x, y, z;
 	
 	public Vector3f(float x, float y, float z) {
 		this.x = x;
