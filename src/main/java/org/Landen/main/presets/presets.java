@@ -5,6 +5,7 @@ import org.Landen.engine.objects.Scene;
 public class presets {
     public static void loadAll() {
         Guis.LoadSideEditorMenu();
+        Guis.loadTopBarDefaults();
         Scenes.loadTest();
     }
 

@@ -3,6 +3,7 @@ package org.Landen.main.Managers;
 import imgui.ImGui;
 import org.Landen.main.gui.Screen;
 import org.Landen.engine.io.Window;
+import org.Landen.main.presets.Guis;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -26,6 +27,8 @@ public class GuiManager {
     public static void tick() {
         Window.getImGuiGlfw().newFrame();
         ImGui.newFrame();
+
+        Guis.renderTopBar();
 
         for (Screen screen : screens) {
             screen.renderImGui();

@@ -24,6 +24,13 @@ public class GameObject {
 		notifyListeners();
 	}
 
+	public GameObject() {
+		this("Unnamed", new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1), null);
+		this.id = "default_" + System.identityHashCode(this); // fallback id
+		this.name = "Default GameObject";
+		this.mesh = null;
+	}
+
 	public void removeChild(GameObject child) {
 		children.remove(child);
 		notifyListeners();

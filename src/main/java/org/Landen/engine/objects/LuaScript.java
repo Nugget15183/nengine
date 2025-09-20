@@ -4,7 +4,7 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.ast.Str;
 
-public class LuaScript {
+public class LuaScript extends GameObject {
     private String contents;
 
     public LuaScript(String contents) {
@@ -29,4 +29,11 @@ public class LuaScript {
         chunk.call();
     }
 
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
 }

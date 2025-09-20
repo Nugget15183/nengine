@@ -62,7 +62,7 @@ public class Main implements Runnable {
 		window.create();
 		shader.create();
 		renderer.init();
-		skybox = new Skybox("common_blue");
+		skybox = new Skybox("common_black");
 		run = new Run(window, camera);
 		input = new Input();
 	}

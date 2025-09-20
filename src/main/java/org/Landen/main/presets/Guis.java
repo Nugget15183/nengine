@@ -1,8 +1,10 @@
 package org.Landen.main.presets;
 
-import org.Landen.engine.graphics.Material;
+import imgui.flag.ImGuiWindowFlags;
+import imgui.type.ImString;
 import org.Landen.engine.maths.Vector3f;
 import org.Landen.engine.objects.GameObject;
+import org.Landen.engine.objects.LuaScript;
 import org.Landen.engine.objects.Scene;
 import org.Landen.main.Managers.GuiManager;
 import org.Landen.main.Managers.MeshManager;
@@ -18,60 +20,146 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 public class Guis {
+
     private static GameObject selectedObject = null;
-    private static Set<String> collapsedObjects = new HashSet<>();
+    private static final Set<String> collapsedObjects = new HashSet<>();
     public static UIGroupComponet scriptGroup;
     public static UIGroupComponet matgroup;
 
-    // Icon cache for textures
     private static final Map<String, Integer> iconCache = new HashMap<>();
+    private static final Map<Class<? extends GameObject>, ObjectSettingsRenderer> settingsRenderers = new HashMap<>();
+
+    public static void registerSettings(Class<? extends GameObject> type, ObjectSettingsRenderer renderer) {
+        settingsRenderers.put(type, renderer);
+    }
+
+    private static final Map<String, Runnable> topTabs = new LinkedHashMap<>();
+    private static String activeTab = null;
+
+    public static void registerTopTab(String name, Runnable content) {
+        topTabs.put(name, content);
+        if (activeTab == null) activeTab = name;
+    }
+
+    public static void renderTopBar() {
+        // Full width of display
+        float width = ImGui.getIO().getDisplaySizeX();
+        float height = 25; // adjust for your font size / style
+
+        // Pin window to top
+        ImGui.setNextWindowPos(0, 0);
+        ImGui.setNextWindowSize(width, height);
+
+        int flags = ImGuiWindowFlags.NoDecoration
+                | ImGuiWindowFlags.NoMove
+                | ImGuiWindowFlags.NoDocking
+                | ImGuiWindowFlags.NoSavedSettings
+                | ImGuiWindowFlags.NoBackground; // transparent background if you want overlay look
+
+        // Begin fixed bar window
+        ImGui.begin("TopBar", flags);
+
+        if (ImGui.beginTabBar("TopTabs")) {
+            for (Map.Entry<String, Runnable> entry : topTabs.entrySet()) {
+                String tabName = entry.getKey();
+                if (ImGui.beginTabItem(tabName)) {
+                    activeTab = tabName;
+                    if (entry.getValue() != null) {
+                        entry.getValue().run();
+                    }
+                    ImGui.endTabItem();
+                }
+            }
+            ImGui.endTabBar();
+        }
+
+        ImGui.end(); // close "TopBar" window
+    }
+
+
+    public static void loadTopBarDefaults() {
+        registerTopTab("File", () -> {
+            if (ImGui.menuItem("New Scene")) {
+                System.out.println("New Scene created!");
+            }
+            if (ImGui.menuItem("Save")) {
+                System.out.println("Scene saved!");
+            }
+            if (ImGui.menuItem("Exit")) {
+                System.exit(0);
+            }
+        });
+
+        registerTopTab("Edit", () -> {
+            if (ImGui.menuItem("Undo")) {
+                System.out.println("Undo action");
+            }
+            if (ImGui.menuItem("Redo")) {
+                System.out.println("Redo action");
+            }
+        });
+
+        registerTopTab("View", () -> {
+            if (ImGui.menuItem("Toggle Hierarchy")) {
+                System.out.println("Toggled hierarchy window");
+            }
+        });
+    }
 
     public static void LoadSideEditorMenu() {
         Screen screen = new Screen(".", "mainsidebar", true, ScreenDockPresets.RIGHT);
         GuiManager.addScreen(screen);
+
         UIGroupComponet baseGroup = new UIGroupComponet("baseGroup", "info") {
             @Override
             public void renderImGui(float slice) {
                 String selectedName = selectedObject != null ? selectedObject.getName() : "None";
                 UILabelComponet ulc = (UILabelComponet) getComponentByID("selectedobjectdisplay");
                 if (ulc != null) ulc.setText("Selected: " + selectedName);
+
                 if (selectedObject != null) {
-                    ImGui.separator();
-                    ImGui.text("Object Settings:");
-                    float[] pos = {selectedObject.getPosition().x, selectedObject.getPosition().y, selectedObject.getPosition().z};
-                    if (ImGui.inputFloat3("Position", pos)) {
-                        selectedObject.getPosition().x = pos[0];
-                        selectedObject.getPosition().y = pos[1];
-                        selectedObject.getPosition().z = pos[2];
-                    }
-                    float[] rot = {selectedObject.getRotation().x, selectedObject.getRotation().y, selectedObject.getRotation().z};
-                    if (ImGui.inputFloat3("Rotation", rot)) {
-                        selectedObject.getRotation().x = rot[0];
-                        selectedObject.getRotation().y = rot[1];
-                        selectedObject.getRotation().z = rot[2];
-                    }
-                    float[] scale = {selectedObject.getScale().x, selectedObject.getScale().y, selectedObject.getScale().z};
-                    if (ImGui.inputFloat3("Scale", scale)) {
-                        selectedObject.getScale().x = scale[0];
-                        selectedObject.getScale().y = scale[1];
-                        selectedObject.getScale().z = scale[2];
-                    }
+                    renderObjectSettings(selectedObject);
                 }
             }
         };
+
         baseGroup.addComponent(new UILabelComponet("selectedobjectdisplay", "Selected: None"));
+
         matgroup = new UIGroupComponet("materialGroup", "Material Editor");
-        matgroup.addComponent(new UISliderComponet("reflectiveslider", "reflectivity", 0.5f, 0.0f, 1000.0f, newValue -> System.out.println("Slider Value Changed: " + newValue)));
-        matgroup.addComponent(new UISliderComponet("ambientslider", "ambient", 0.5f, 0.0f, 1.5f, newValue -> System.out.println("Slider Value Changed: " + newValue)));
+        matgroup.addComponent(new UISliderComponet("reflectiveslider", "reflectivity", 0.5f, 0.0f, 1000.0f, v -> System.out.println("Reflectivity: " + v)));
+        matgroup.addComponent(new UISliderComponet("ambientslider", "ambient", 0.5f, 0.0f, 1.5f, v -> System.out.println("Ambient: " + v)));
+
         scriptGroup = new UIGroupComponet("scriptGroup", "Script Editor");
-        scriptGroup.addComponent(new UITextBoxComponet("scriptbox", "Script Editor", "Start Typing Here...", 64, newText -> System.out.println("Script Text Changed: " + newText)));
+        scriptGroup.addComponent(new UITextBoxComponet("scriptbox", "Script Editor", "Start Typing Here...", 64, t -> System.out.println("Script changed: " + t)));
         scriptGroup.addComponent(new UIButtonComponet("runScriptButton", "Run Script", () -> System.out.println("Run Script Button Pressed")));
+
         screen.addComponent(baseGroup);
         screen.addComponent(matgroup);
         screen.addComponent(scriptGroup);
+
+        // --- Register default settings ---
+        registerSettings(GameObject.class, Guis::renderDefaultTransformSettings);
+
+        // --- Register LuaScript settings (no transform) ---
+        registerSettings(LuaScript.class, obj -> {
+            ImGui.separator();
+            ImGui.text("Script Settings");
+
+            LuaScript script = (LuaScript) obj;
+            ImString buffer = new ImString(script.getContents(), 1024);
+
+            if (ImGui.inputTextMultiline("Script", buffer)) {
+                script.setContents(buffer.get());
+            }
+        });
     }
 
     public static void loadHierarchy(Scene scene) {
+        ImGui.setNextWindowPos(0, 25); // push it down
+        ImGui.setNextWindowSize(
+                ImGui.getIO().getDisplaySizeX(),
+                ImGui.getIO().getDisplaySizeY() - 25
+        );
         GameObject root = scene.getRootObject();
         attachHierarchyListenersRecursive(root, scene);
         UIGroupComponet rootGroup = buildHierarchyGroup(root, scene);
@@ -142,30 +230,24 @@ public class Guis {
                 ImGui.popID();
                 if (indentAmount > 0) ImGui.unindent(indentAmount);
 
-                // --- Detect empty space click ---
                 if (ImGui.isWindowHovered() && !ImGui.isAnyItemHovered()) {
-                    // Left click empty space -> deselect
                     if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
                         selectedObject = null;
                     }
-                    // Right click empty space -> deselect + open context menu
                     if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
-                        //selectedObject = null;
                         ImGui.openPopup("hierarchyContextMenu");
                     }
                 }
 
-                // --- Context menu ---
                 if (ImGui.beginPopup("hierarchyContextMenu")) {
                     if (selectedObject != null) {
-
                         if (ImGui.beginMenu("Add GameObject")) {
                             for (MeshManager.MeshPreset preset : MeshManager.MeshPreset.meshPresets) {
                                 if (ImGui.menuItem(preset.displayName)) {
                                     GameObject newObj = MeshManager.createGameObjectFromMesh(
                                             preset.displayName,
                                             preset.filePath,
-                                            new Material(),
+                                            new org.Landen.engine.graphics.Material(),
                                             new Vector3f(0, 0, 0),
                                             new Vector3f(0, 0, 0),
                                             new Vector3f(1, 1, 1)
@@ -175,33 +257,23 @@ public class Guis {
                                     MeshManager.registerGameObject(newObj);
                                     attachHierarchyListenersRecursive(newObj, scene);
                                     selectedObject.notifyListeners();
-
                                 }
                             }
                             ImGui.endMenu();
                         }
 
                         if (ImGui.menuItem("Add Script")) {
-                            GameObject scriptObj = new GameObject(
-                                    "Script",
-                                    selectedObject.getPosition(),
-                                    selectedObject.getRotation(),
-                                    selectedObject.getScale(),
-                                    null
-                            );
+                            LuaScript scriptObj = new LuaScript("print('Hello world')");
                             selectedObject.addChild(scriptObj);
                             scene.addObject(scriptObj);
                             attachHierarchyListenersRecursive(scriptObj, scene);
                             selectedObject.notifyListeners();
                         }
-
                     } else {
                         ImGui.textDisabled("No object selected");
                     }
                     ImGui.endPopup();
                 }
-
-
             }
         };
 
@@ -251,8 +323,7 @@ public class Guis {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA,
-                    w[0], h[0], 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, image);
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, w[0], h[0], 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, image);
             STBImage.stbi_image_free(image);
 
             iconCache.put(type, texID);
@@ -262,4 +333,31 @@ public class Guis {
             return 0;
         }
     }
+
+    private static void renderObjectSettings(GameObject obj) {
+        ObjectSettingsRenderer renderer = settingsRenderers.getOrDefault(obj.getClass(), Guis::renderDefaultTransformSettings);
+        renderer.render(obj);
+    }
+
+    private static void renderDefaultTransformSettings(GameObject selectedObject) {
+        ImGui.separator();
+        ImGui.text("Transform");
+
+        float[] pos = {selectedObject.getPosition().x, selectedObject.getPosition().y, selectedObject.getPosition().z};
+        if (ImGui.inputFloat3("Position", pos)) {
+            selectedObject.getPosition().set(pos[0], pos[1], pos[2]);
+        }
+
+        float[] rot = {selectedObject.getRotation().x, selectedObject.getRotation().y, selectedObject.getRotation().z};
+        if (ImGui.inputFloat3("Rotation", rot)) {
+            selectedObject.getRotation().set(rot[0], rot[1], rot[2]);
+        }
+
+        float[] scale = {selectedObject.getScale().x, selectedObject.getScale().y, selectedObject.getScale().z};
+        if (ImGui.inputFloat3("Scale", scale)) {
+            selectedObject.getScale().set(scale[0], scale[1], scale[2]);
+        }
+    }
+
+
 }
